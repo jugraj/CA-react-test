@@ -5,21 +5,48 @@
   "keywords": [],
   "main": "src/index.tsx",
   "dependencies": {
+    "@fontsource/roboto": "^4.5.8",
+    "axios": "^1.3.1",
+    "cors": "^2.8.5",
     "express": "4.18.2",
+    "node-sass": "^8.0.0",
     "react": "18.0.0",
     "react-dom": "18.0.0",
-    "react-scripts": "4.0.3"
+    "react-scripts": "^5.0.1"
   },
   "devDependencies": {
     "@types/react": "18.0.25",
     "@types/react-dom": "18.0.9",
+    "@typescript-eslint/parser": "^5.50.0",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.32.0",
+    "eslint-config-react": "^1.1.7",
+    "prettier": "^2.8.3",
+    "sass": "^1.58.0",
+    "sass-loader": "^13.2.0",
+    "style-loader": "^3.3.1",
     "typescript": "4.4.2"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "node server/server.js & react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "parserOptions": {
+      "sourceType": "module",
+      "ecmaVersion": 2020
+    },
+    "rules": {
+      "no-unused-vars": [
+        "warn",
+        {
+          "argsIgnorePattern": "^_",
+          "varsIgnorePattern": "^_"
+        }
+      ]
+    }
   },
   "browserslist": [
     ">0.2%",
