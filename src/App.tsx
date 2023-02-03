@@ -1,50 +1,58 @@
-import { MouseEventHandler, useEffect, useState } from "react";
-import axios from "axios";
+import { memo, useEffect, useState } from "react";
 import "@fontsource/roboto";
+import { io } from "socket.io-client";
 
 import Item from "./components/item";
 import "./styles.scss";
 import { Data } from "./types/data.types";
 
-export default function App() {
+const socket = io("https://9ehj7v-8282.preview.csb.app");
+
+const App = () => {
   const [data, setData] = useState<Data[]>();
   const [loading, setLoading] = useState<boolean>(false);
   const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
-
+  const [isConnected, setIsConnected] = useState(socket.connected);
   const [error, setError] = useState<Error | undefined>();
 
   useEffect(() => {
-    (async () => {
-      setLoading(true);
-      try {
-        const result = await axios.get(
-          "https://9ehj7v-8282.preview.csb.app/get-items",
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        setData(result.data);
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-        setError(error as Error);
-      }
-    })();
+    socket.on("connect", () => {
+      setIsConnected(true);
+    });
+    socket.on("disconnect", () => {
+      setIsConnected(false);
+    });
+    return () => {
+      socket.off("connect");
+      socket.off("disconnect");
+    };
   }, []);
+
+  useEffect(() => {
+    if (isConnected) {
+      socket.emit("items.create");
+      socket.on("items.create", (arg: Data[]) => {
+        setData(arg);
+      });
+    }
+  }, [isConnected]);
 
   const subscribe = () => {
     setIsSubscribed(true);
+    socket.emit("items.subscribe");
+    socket.on("items.subscribe", (newData: Data[]) => {
+      setData(newData);
+    });
   };
 
   const unsubscribe = () => {
+    socket.emit("items.unsubscribe");
     setIsSubscribed(false);
   };
 
   return (
     <div className="App">
-      {loading && <div>Loading...</div>}
+      {!isConnected && <div>Loading...</div>}
       <div className="items_holder">
         {data?.map((info) => (
           <Item data={info} />
@@ -68,4 +76,6 @@ export default function App() {
       </button>
     </div>
   );
-}
+};
+
+export default memo(App);

@@ -4,9 +4,10 @@
     background: darken($color, 10%);
   }
   &:disabled {
-    opacity: 0.4;
+    background: grey;
+    opacity: 0.5;
     &:hover {
-      background: $color;
+      background: grey;
     }
   }
 }
@@ -16,7 +17,7 @@
 }
 
 .app-button {
-  @include btn-color(#5eba7d);
+  @include btn-color(green);
   padding: 10px;
   color: white;
   margin: 10px;
