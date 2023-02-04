@@ -1,0 +1,44 @@
+.item {
+  display: flex;
+  gap: 8px;
+  flex-direction: column;
+  border: 1px solid grey;
+  border-radius: 5px;
+  padding: 8px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  &__header {
+    background-color: cornflowerblue;
+    width: 100%;
+    padding: 4px;
+    box-sizing: border-box;
+    color: white;
+    font-size: 1.2rem;
+  }
+}
+
+.price {
+  color: black;
+  transition: all 0.3s ease-in-out;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  &--negative {
+    @extend .price;
+    color: red;
+    background: lighten(red, 45%);
+    &:after {
+      content: "↓";
+    }
+  }
+  &--positive {
+    @extend .price;
+    color: green;
+    background: lighten(green, 70%);
+    &:after {
+      content: "↑";
+    }
+  }
+}
