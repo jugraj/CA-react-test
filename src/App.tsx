@@ -6,76 +6,78 @@ import Item from "./components/item";
 import "./styles.scss";
 import { Data } from "./types/data.types";
 
-const socket = io("https://9ehj7v-8282.preview.csb.app");
+const socket = io("http://localhost:8282");
 
 const App = () => {
-  const [data, setData] = useState<Data[]>();
-  const [loading, setLoading] = useState<boolean>(false);
-  const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
-  const [isConnected, setIsConnected] = useState(socket.connected);
-  const [error, setError] = useState<Error | undefined>();
+    const [data, setData] = useState<Data[]>();
+    const [loading, setLoading] = useState<boolean>(false);
+    const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
+    const [isConnected, setIsConnected] = useState(socket.connected);
+    const [error, setError] = useState<Error | undefined>();
 
-  useEffect(() => {
-    socket.on("connect", () => {
-      setIsConnected(true);
-    });
-    socket.on("disconnect", () => {
-      setIsConnected(false);
-    });
-    return () => {
-      socket.off("connect");
-      socket.off("disconnect");
+    useEffect(() => {
+        socket.disconnect();
+        socket.on("connect", () => {
+            setIsConnected(true);
+        });
+        socket.on("disconnect", () => {
+            setIsConnected(false);
+        });
+        socket.connect();
+        return () => {
+            socket.off("connect");
+            socket.off("disconnect");
+        };
+    }, []);
+
+    useEffect(() => {
+        if (isConnected) {
+            socket.emit("items.create");
+            socket.on("items.create", (arg: Data[]) => {
+                setData(arg);
+            });
+        }
+    }, [isConnected]);
+
+    const subscribe = () => {
+        setIsSubscribed(true);
+        socket.emit("items.subscribe");
+        socket.on("items.subscribe", (newData: Data[]) => {
+            setData(newData);
+        });
     };
-  }, []);
 
-  useEffect(() => {
-    if (isConnected) {
-      socket.emit("items.create");
-      socket.on("items.create", (arg: Data[]) => {
-        setData(arg);
-      });
-    }
-  }, [isConnected]);
+    const unsubscribe = () => {
+        socket.emit("items.unsubscribe");
+        setIsSubscribed(false);
+    };
 
-  const subscribe = () => {
-    setIsSubscribed(true);
-    socket.emit("items.subscribe");
-    socket.on("items.subscribe", (newData: Data[]) => {
-      setData(newData);
-    });
-  };
-
-  const unsubscribe = () => {
-    socket.emit("items.unsubscribe");
-    setIsSubscribed(false);
-  };
-
-  return (
-    <div className="App">
-      {!isConnected && <div>Loading...</div>}
-      <div className="items_holder">
-        {data?.map((info) => (
-          <Item data={info} />
-        ))}
-      </div>
-      {error && <div className="error">{error.message}</div>}
-      <hr />
-      <button
-        className="app-button"
-        disabled={loading || isSubscribed}
-        onClick={subscribe}
-      >
-        Subscribe
-      </button>
-      <button
-        className="app-button--unsubscribe"
-        disabled={loading || !isSubscribed}
-        onClick={unsubscribe}
-      >
-        Unsubscribe
-      </button>
-    </div>
-  );
+    return (
+        <div className="App">
+            {!isConnected && <div>Loading...</div>}
+            <div className="items_holder">
+                {data?.map((info, i) => (
+                    <Item key={`${info.id}_${i}`} data={info} />
+                ))}
+            </div>
+            {error && <div className="error">{error.message}</div>}
+            <hr />
+            <button
+                className="app-button"
+                disabled={loading || isSubscribed}
+                onClick={subscribe}
+            >
+                Subscribe
+            </button>
+            <button
+                className="app-button--unsubscribe"
+                disabled={loading || !isSubscribed}
+                onClick={unsubscribe}
+            >
+                Unsubscribe
+            </button>
+        </div>
+    );
 };
 
 export default memo(App);
