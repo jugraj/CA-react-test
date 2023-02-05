@@ -64,14 +64,14 @@ const App = () => {
             <hr />
             <button
                 className="app-button"
-                disabled={loading || isSubscribed}
+                disabled={isSubscribed}
                 onClick={subscribe}
             >
                 Subscribe
             </button>
             <button
                 className="app-button--unsubscribe"
-                disabled={loading || !isSubscribed}
+                disabled={!isSubscribed}
                 onClick={unsubscribe}
             >
                 Unsubscribe
