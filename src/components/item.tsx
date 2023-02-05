@@ -1,4 +1,4 @@
-import { memo, useEffect, useLayoutEffect, useState } from "react";
+import { memo, useLayoutEffect, useState } from "react";
 import { Data } from "../types/data.types";
 import "./item.styles.scss";
 
