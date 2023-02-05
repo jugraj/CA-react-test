@@ -10,10 +10,10 @@ const socket = io("http://localhost:8282");
 
 const App = () => {
     const [data, setData] = useState<Data[]>();
-    const [loading, setLoading] = useState<boolean>(false);
+
     const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
     const [isConnected, setIsConnected] = useState(socket.connected);
-    const [error, setError] = useState<Error | undefined>();
+
 
     useEffect(() => {
         socket.disconnect();
@@ -60,7 +60,7 @@ const App = () => {
                     <Item key={`${info.id}_${i}`} data={info} />
                 ))}
             </div>
-            {error && <div className="error">{error.message}</div>}
+            
             <hr />
             <button
                 className="app-button"
